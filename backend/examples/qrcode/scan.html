@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code Scanner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.1.4/html5-qrcode.min.js"></script>
+    <script>
+        async function onScanSuccess(text, result) {
+            const response = await fetch("http://127.0.0.1:8000/qrcode/decode", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ msg: text })
+            })
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("result").innerText = "Deti4Devs QRCode Status: VALID\n\nContent: " + data.msg;
+            } else {
+                document.getElementById("result").innerText = "Deti4Devs QRCode Status: INVALID\n\nContent: " + text;
+            }
+            
+        }
+
+        function onScanError(errorMessage) {
+            console.error(`Error scanning: ${errorMessage}`);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const html5QrcodeScanner = new Html5QrcodeScanner(
+                "reader", { fps: 10, qrbox: 600 }
+            );
+            html5QrcodeScanner.render(onScanSuccess, onScanError);
+        });
+    </script>
+</head>
+<body>
+    <h1>QR Code Scanner</h1>
+    <div id="reader" style="width:90%;margin:auto"></div>
+    <div>
+        <h2 style="font-size: 35pt;"
+        >Scanned QR Code Result:</h2>
+        <p id="result" style="font-size: 25pt;"
+        ></p>
+    </div>
+</body>
+</html>
