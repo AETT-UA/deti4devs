@@ -10,6 +10,7 @@ def init_db() -> None:
         with engine.connect() as conn:
             trans = conn.begin()
             inspector = inspect(engine)
+            print(inspector.get_schema_names())
             if settings.SCHEMA_NAME not in inspector.get_schema_names():
                 try:
                     conn.execute(CreateSchema(settings.SCHEMA_NAME))

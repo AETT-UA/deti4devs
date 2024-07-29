@@ -2,14 +2,12 @@ from typing import Optional
 from typing import List
 
 from sqlalchemy import String, Integer, Boolean, Float, ForeignKey, Date
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
 from app.core.config import settings
 
 class Users(Base):
-    __tablename__ = "users"
-    
     id: Mapped[int] = mapped_column("id", Integer, primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     auth_token: Mapped[str] = mapped_column(String(255), nullable=True)

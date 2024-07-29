@@ -4,9 +4,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.config import settings
 from app.db.base_class import Base
 
-from .participantes import Participantes
-from .atividade import Atividade
-
 class Participacao(Base):
     __tablename__ = "participacao"
     id: Mapped[int] = mapped_column("id", Integer, primary_key=True)

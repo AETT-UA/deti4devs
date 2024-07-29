@@ -2,13 +2,10 @@ from typing import Optional
 from typing import List
 
 from sqlalchemy import String, Integer, Boolean, Float, ForeignKey, Date
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
 from app.core.config import settings
-
-from .atividade import Atividade
-from .empresas import Empresas
 
 class Eventos(Base):
     __tablename__ = "eventos"

@@ -4,8 +4,9 @@ from app.crud.base import CRUDBase
 from app.models.participantes import Participantes
 from app.dtos.participantes_dto import ParticipantesDTO, ParticipantesCreateDTO, ParticipantesUpdateDTO
 
-class CRUDStaff(CRUDBase[Participantes, 
-                         ParticipantesDTO, 
+class CRUDSParticipantes(CRUDBase[Participantes, 
                          ParticipantesCreateDTO, 
                          ParticipantesUpdateDTO]):
-    pass
+    ...
+
+participantes = CRUDSParticipantes(Participantes)

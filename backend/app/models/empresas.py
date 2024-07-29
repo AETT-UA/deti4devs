@@ -2,15 +2,10 @@ from typing import Optional
 from typing import List
 
 from sqlalchemy import String, Integer, Boolean, Float, ForeignKey, Date, TIMESTAMP
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base_class import Base
 from app.core.config import settings
-
-from .users import Users
-from .atividade import Atividade
-from .eventos import Eventos
-from .desafios import Desafios
 
 class Empresas(Base):
     __tablename__ = "empresas"
