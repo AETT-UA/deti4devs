@@ -2,10 +2,18 @@ FROM python:3.12.4-alpine
 
 WORKDIR /backend
 
-COPY ./requirements.txt .
+RUN apt-get update
 
-RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
+RUN pip install --upgrade pip \
+    pip install --no-cache-dir --upgrade poetry
 
-COPY ./src ./src
+COPY pyproject.lock pyproject.toml ./
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+COPY . .
+
+RUN poetry install
+
+EXPOSE 8000
+
+CMD poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
