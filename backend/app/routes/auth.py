@@ -6,7 +6,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.dependencies.core import ACCESS_TOKEN_EXPIRE_MINUTES
 from app.dependencies.database import get_db
-from app.models.auth import Token, User, UserCreate, UserDB
+from ..models.users import UserDB
+from ..schemas.users import UserCreate, User, Token
 from sqlalchemy.orm import Session
 
 from ..dependencies.auth import authenticate_user, create_access_token,get_current_active_user, get_password_hash
