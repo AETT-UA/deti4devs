@@ -12,3 +12,12 @@ services:
       - 3000:80
     depends_on:
       - backend
+  
+  database:
+    image: 'postgres:latest'
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: deti
