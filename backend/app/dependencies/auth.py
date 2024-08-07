@@ -24,7 +24,7 @@ def get_password_hash(password):
 
 
 def get_user(db: Session, username: str):
-    return db.query(UserDB).filter(UserDB.username == username).first()
+    return db.query(Users).filter(Users.username == username).first()
 
 
 def authenticate_user(db: Session, username: str, password: str):

@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.dependencies.core import ACCESS_TOKEN_EXPIRE_MINUTES
 from app.dependencies.database import get_db
-from ..models.users import UserDB
+from ..models.users import Users
 from ..schemas.users import UserCreate, User, Token
 from sqlalchemy.orm import Session
 
@@ -20,11 +20,11 @@ router = APIRouter(
 
 @router.post("/register", response_model=User)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(UserDB).filter(UserDB.username == user.username).first()
+    db_user = db.query(Users).filter(Users.username == user.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
     hashed_password = get_password_hash(user.password)
-    db_user = UserDB(username=user.username, email=user.email, full_name=user.full_name, hashed_password=hashed_password)
+    db_user = Users(username=user.username, email=user.email, full_name=user.full_name, hashed_password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -50,12 +50,12 @@ async def login_for_access_token(
 
 @router.get("/me/", response_model=User)
 async def read_users_me(
-    current_user: Annotated[UserDB, Depends(get_current_active_user)],
+    current_user: Annotated[Users, Depends(get_current_active_user)],
 ):
     return User.model_validate(current_user)
 
 @router.get("/users/me/items/")
 async def read_own_items(
-    current_user: Annotated[UserDB, Depends(get_current_active_user)],
+    current_user: Annotated[Users, Depends(get_current_active_user)],
 ):
     return [{"item_id": "Foo", "owner": current_user.username}]
