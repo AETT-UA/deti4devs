@@ -32,3 +32,5 @@ archive.zip
 # python virtual environment
 .venv
 venv
+
+.env
