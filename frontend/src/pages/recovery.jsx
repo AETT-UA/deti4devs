@@ -1,11 +1,12 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const Recovery = () => {
   const navigate = useNavigate();
   const [submitted, setSubmitted] = useState(false);
-  
+  const [countdown, setCountdown] = useState(3);
+
   const {
     register,
     handleSubmit,
@@ -15,8 +16,23 @@ export const Recovery = () => {
   const onSubmit = (data) => {
     // Simulate the recovery process
     setSubmitted(true);
-    setTimeout(() => navigate('/'), 3000); // Redirect to home after 3 seconds
   };
+
+  useEffect(() => {
+    if (submitted) {
+      const timer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown === 1) {
+            clearInterval(timer);
+            navigate('/');
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [submitted, navigate]);
 
   return (
     <div className="w-full max-w-xs sm:max-w-lg px-2 mx-auto mt-8 p-6 bg-transparent">
@@ -60,6 +76,7 @@ export const Recovery = () => {
       ) : (
         <div className="text-center">
           <p className="text-primary-color">Sent to the email if the inserted data is correct</p>
+          <p className="text-primary-color">Redirecting in {countdown}...</p>
         </div>
       )}
     </div>
