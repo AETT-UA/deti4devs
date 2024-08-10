@@ -35,7 +35,7 @@ export const Login = () => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-xs sm:max-w-lg px-2 mx-auto mt-8 p-6 bg-transparent">
       <div className="mb-4 flex justify-center cursor-pointer" onClick={() => navigate('/')}>
-        <img src="/public/logo.png" alt="Logo" />
+        <img src="/logo.png" alt="Logo" />
       </div>
       <h2 className="text-2xl font-medium tracking-wider mb-6 text-center text-primary-color">- Login -</h2>
       
