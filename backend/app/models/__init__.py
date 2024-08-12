@@ -6,3 +6,5 @@ from .participacao import Participacao
 from .participantes import Participantes
 from .staff import Staff
 from .users import Users
+
+__all__ = ["Atividade", "Desafios", "Empresas", "Eventos", "Participacao", "Participantes", "Staff", "Users"]
