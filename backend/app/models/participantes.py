@@ -7,6 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.dependencies.database import Base
 
 class Participantes(Base):
+    __tablename__ = "participantes"
     id: Mapped[int] = mapped_column("id", Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column( 
                 ForeignKey(f"users.id", ondelete="CASCADE"),

@@ -1,5 +1,6 @@
 from sqlalchemy import ForeignKey, Integer, TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+import sqlalchemy.sql
 
 from app.dependencies.database import Base
 
@@ -14,7 +15,7 @@ class Participacao(Base):
         ForeignKey(f"atividade.id", ondelete="CASCADE"),
         nullable=False
     )
-    timestamp: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=False, server_default="CURRENT_TIMESTAMP")
+    timestamp: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=False, server_default=sqlalchemy.sql.func.current_timestamp())
 
-    participante: Mapped["Participantes"] = relationship("Participantes", back_populates="participacoes")
+    participantes: Mapped["Participantes"] = relationship("Participantes", back_populates="participacoes")
     atividade: Mapped["Atividade"] = relationship("Atividade", back_populates="participacoes")
