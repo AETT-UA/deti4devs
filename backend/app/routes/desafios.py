@@ -29,7 +29,7 @@ def create_desafio(desafio: DesafioCreate, db: Session = Depends(get_db)):
             # create 'Desafios' object
             db_desafio = Desafios(
                 descricao=desafio.descricao,
-                #empresa_id=desafio.empresa_id,
+                empresa_id=desafio.empresa_id,
                 atividade_id=db_atividade.id
             )
             db.add(db_desafio)
@@ -42,7 +42,8 @@ def create_desafio(desafio: DesafioCreate, db: Session = Depends(get_db)):
                 id=db_desafio.id,
                 nome=db_atividade.nome,
                 pontos=db_atividade.pontos,
-                descricao=db_desafio.descricao
+                descricao=db_desafio.descricao,
+                empresa_id=db_desafio.empresa_id
             )
     except Exception as e:
         db.rollback()
@@ -56,7 +57,9 @@ def read_desafios(skip: int = 0, limit: int = 10, db: Session = Depends(get_db))
             Desafios.id,
             Atividade.nome,
             Atividade.pontos,
-            Desafios.descricao)
+            Desafios.descricao,
+            Desafios.empresa_id
+            )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .offset(skip)
         .limit(limit)
@@ -73,7 +76,9 @@ def read_desafio(desafio_id: int, db: Session = Depends(get_db)):
             Desafios.id,
             Atividade.nome,
             Atividade.pontos,
-            Desafios.descricao)
+            Desafios.descricao,
+            Desafios.empresa_id
+            )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
         .first()
@@ -90,7 +95,9 @@ def update_desafio(desafio_id: int, desafio: DesafioUpdate, db: Session = Depend
             Desafios.id,
             Atividade.nome,
             Atividade.pontos,
-            Desafios.descricao)
+            Desafios.descricao,
+            Desafios.empresa_id
+            )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
         .first()
@@ -105,7 +112,8 @@ def update_desafio(desafio_id: int, desafio: DesafioUpdate, db: Session = Depend
     })
     # update 'Desafios' object
     db.query(Desafios).filter(Desafios.id == db_desafio.id).update({
-        "descricao": desafio.descricao
+        "descricao": desafio.descricao,
+        "empresa_id": desafio.empresa_id
     })
     db.commit()
     
@@ -114,7 +122,8 @@ def update_desafio(desafio_id: int, desafio: DesafioUpdate, db: Session = Depend
         id=db_desafio.id,
         nome=desafio.nome,
         pontos=desafio.pontos,
-        descricao=desafio.descricao
+        descricao=desafio.descricao,
+        empresa_id=desafio.empresa_id
     )
 
 @router.delete("/{desafio_id}", response_model=Desafio)
@@ -125,7 +134,9 @@ def delete_desafio(desafio_id: int, db: Session = Depends(get_db)):
             Desafios.id,
             Atividade.nome,
             Atividade.pontos,
-            Desafios.descricao)
+            Desafios.descricao,
+            Desafios.empresa_id
+            )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
         .first()

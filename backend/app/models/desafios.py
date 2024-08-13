@@ -11,10 +11,10 @@ class Desafios(Base):
         nullable=False
     )
     descricao: Mapped[str] = mapped_column(Text, nullable=False)
-    #empresa_id: Mapped[int] = mapped_column(
-    #    ForeignKey(f"empresas.id", ondelete="CASCADE"),
-    #    nullable=False
-    #)
+    empresa_id: Mapped[int] = mapped_column(
+        ForeignKey(f"empresas.id", ondelete="CASCADE"),
+        nullable=False
+    )
 
     atividade: Mapped["Atividade"] = relationship("Atividade", back_populates="desafios")
-    #empresa: Mapped["Empresas"] = relationship("Empresas", back_populates="desafios")
+    empresa: Mapped["Empresas"] = relationship("Empresas", back_populates="desafios")
