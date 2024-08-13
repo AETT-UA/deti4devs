@@ -1,8 +1,10 @@
-from typing import List
+from typing import List, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from app.dependencies.auth import get_current_active_user
 from app.dependencies.database import get_db
+from ..models.users import Users
 from ..models.desafios import Desafios
 from ..models.atividade import Atividade
 from ..schemas.desafios import DesafioCreate, DesafioUpdate, Desafio
@@ -13,9 +15,15 @@ router = APIRouter(
     tags=["desafios"],
     responses={404: {"description": "Not found"}}
 )
+from sqlalchemy import inspect
 
 @router.post("/", response_model=Desafio)
-def create_desafio(desafio: DesafioCreate, db: Session = Depends(get_db)):
+def create_desafio(
+    desafio: DesafioCreate,
+    current_user: Annotated[Users, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)
+):
+    # TODO: check if user is allowed to create desafio (staff)
     try:
         with db.begin():
             # create 'Atividade' object
@@ -83,7 +91,14 @@ def read_desafio(desafio_id: int, db: Session = Depends(get_db)):
     return db_desafio
 
 @router.put("/{desafio_id}", response_model=Desafio)
-def update_desafio(desafio_id: int, desafio: DesafioUpdate, db: Session = Depends(get_db)):
+def update_desafio(
+    desafio_id: int,
+    desafio: DesafioUpdate,
+    current_user: Annotated[Users, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)
+):
+    # TODO: check if user is allowed to update desafio (staff)
+
     # Join 'Atividade' and 'Desafios' tables
     db_desafio = (
         db.query(
@@ -118,7 +133,12 @@ def update_desafio(desafio_id: int, desafio: DesafioUpdate, db: Session = Depend
     )
 
 @router.delete("/{desafio_id}", response_model=Desafio)
-def delete_desafio(desafio_id: int, db: Session = Depends(get_db)):
+def delete_desafio(
+    desafio_id: int,
+    current_user: Annotated[Users, Depends(get_current_active_user)],
+    db: Session = Depends(get_db)):
+    # TODO: check if user is allowed to delete desafio (staff)
+
     # Join 'Atividade' and 'Desafios' tables
     db_desafio = (
         db.query(
