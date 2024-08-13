@@ -43,11 +43,11 @@ def verify(data: str) -> bool:
     return hash == signature[4:]
 
 
-def encodeQr(data: str) -> str:
+def encode(data: str) -> str:
     return data + sign(data)
 
 
-def decodeQr(data: str) -> str:
+def decode(data: str) -> str:
     if verify(data):
         return data[:-25]
     return None
