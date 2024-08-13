@@ -17,6 +17,6 @@ class Empresas(Base):
     spotlight_time: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
 
     user: Mapped["Users"] = relationship("Users", back_populates="empresas")
-    atividades: Mapped[List["Atividade"]] = relationship("Atividade", back_populates="empresa")
+    #atividades: Mapped[List["Atividade"]] = relationship("Atividade", back_populates="empresa")
     eventos: Mapped[List["Eventos"]] = relationship("Eventos", back_populates="empresa")
-    desafios: Mapped[List["Desafios"]] = relationship("Desafios", back_populates="empresa")
+    #desafios: Mapped[List["Desafios"]] = relationship("Desafios", back_populates="empresa")

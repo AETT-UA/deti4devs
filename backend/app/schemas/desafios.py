@@ -4,7 +4,7 @@ from .atividades import AtividadeBase
 
 class DesafioBase(AtividadeBase):
     descricao: str
-    empresa_id: int
+    #empresa_id: int
 
 class DesafioCreate(DesafioBase):
     pass
@@ -16,4 +16,4 @@ class Desafio(DesafioBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

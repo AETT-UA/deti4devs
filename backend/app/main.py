@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.dependencies.database import Base, engine
 
-from app.routes import auth
+from app.routes import auth, desafios
 from app import models
 
 Base.metadata.create_all(bind=engine)
