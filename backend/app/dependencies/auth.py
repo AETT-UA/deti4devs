@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
-from fastapi import Depends, HTTPException, status, Depends
+from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
 import jwt
 from app.dependencies.database import get_db
-from app.models.auth import TokenData, User, UserDB
+from app.models.users import Users
+from app.schemas.users import User, TokenData
 from app.dependencies.core import (
     SECRET_KEY,
     ALGORITHM,
@@ -13,14 +14,18 @@ from app.dependencies.core import (
     oauth2_scheme,
 )
 
+
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
+
 
 def get_password_hash(password):
     return pwd_context.hash(password)
 
+
 def get_user(db: Session, username: str):
-    return db.query(UserDB).filter(UserDB.username == username).first()
+    return db.query(Users).filter(Users.username == username).first()
+
 
 def authenticate_user(db: Session, username: str, password: str):
     user = get_user(db, username)
@@ -29,6 +34,7 @@ def authenticate_user(db: Session, username: str, password: str):
     if not verify_password(password, user.hashed_password):
         return False
     return user
+
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -39,6 +45,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
@@ -59,8 +66,9 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
         raise credentials_exception
     return user
 
+
 async def get_current_active_user(
-    current_user: Annotated[User, Depends(get_current_user)],
+        current_user: Annotated[User, Depends(get_current_user)],
 ):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
