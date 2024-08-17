@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Code Generator</title>
+    <script>
+        async function generateQRCode() {
+            event.preventDefault();
+            const input = document.getElementById("inputText").value;
+            const response = await fetch("http://127.0.0.1:8000/qrcode/encode", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ msg: input })
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                document.getElementById("qrcodeImage").src = url;
+            } else {
+                alert("Failed to generate QR Code");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>QR Code Generator</h1>
+    <!-- button to /scan -->
+    <a href="/scan">QR Code Scanner</a>
+    <br><br>
+    <form onsubmit="generateQRCode(event)">
+        <input type="text" id="inputText" placeholder="Enter text" required>
+        <button type="submit">Generate QR Code</button>
+    </form>
+    <br><br>
+    <img id="qrcodeImage" alt="QR Code will be displayed here">
+</body>
+</html>
