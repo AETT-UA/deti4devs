@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import HTTPException, status, Depends
 from sqlalchemy.orm import Session
 import jwt
-from app.dependencies.database import get_db
+from app.dependencies.database import SessionLocal
 from app.models.users import Users
 from app.schemas.users import User, TokenData
 from app.dependencies.core import (
@@ -47,7 +47,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -61,9 +61,10 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Se
         token_data = TokenData(username=username)
     except jwt.JWTError:
         raise credentials_exception
-    user = get_user(db, username=token_data.username)
-    if user is None:
-        raise credentials_exception
+    with SessionLocal() as db:
+        user = get_user(db, username=token_data.username)
+        if user is None:
+            raise credentials_exception
     return user
 
 

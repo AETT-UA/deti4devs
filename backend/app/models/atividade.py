@@ -10,7 +10,7 @@ class Atividade(Base):
     id: Mapped[int] = mapped_column("id", Integer, primary_key=True)
     nome: Mapped[str] = mapped_column(String(255), nullable=False)
     pontos: Mapped[int] = mapped_column(Integer, default=0)
-
+    
     empresa: Mapped[List["Empresas"]] = relationship("Empresas", back_populates="atividades")
     eventos: Mapped[List["Eventos"]] = relationship("Eventos", back_populates="atividade")
     desafios: Mapped[List["Desafios"]] = relationship("Desafios", back_populates="atividade")
