@@ -6,26 +6,26 @@ import AuthOutlet from "@auth-kit/react-router/AuthOutlet";
 import { Desafios } from "../pages/desafios";
 
 export const router = createBrowserRouter([
-    {
+  {
+    path: "/",
+    //        element: <AuthOutlet fallbackPath="/login" />,
+    children: [
+      {
         path: "/",
-        element: <AuthOutlet fallbackPath="/login" />,
-        children: [
-            {
-                path: "/",
-                element: <Home />,
-            },
-        ],
-    },
-    {
-        path: "/login",
-        element: <Login />,
-    },
-    {
-        path: "/register",
-        element: <Register />,
-    },
-    {
-        path: "/desafios",
-        element: <Desafios />,
-    },
+        element: <Home />,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/desafios",
+    element: <Desafios />,
+  },
 ]);
