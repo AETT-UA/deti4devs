@@ -36,7 +36,6 @@ export const Login = () => {
 
   return (
     <>
-      <Navbar />
       <form onSubmit={handleSubmit(onSubmit)} className="form-control">
         <input
           placeholder="Username"

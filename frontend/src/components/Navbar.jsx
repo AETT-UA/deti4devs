@@ -36,7 +36,7 @@ export default function Navbar() {
         </div>
         <div className="navbar-end">
           <a className="btn">Button</a>
-          <div className="dropdown">
+          <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
