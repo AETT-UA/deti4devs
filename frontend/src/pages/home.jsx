@@ -19,10 +19,28 @@ export const Home = () => {
           </div>
         </div>
         <div className="w-full h-36 flex flex-row gap-4 my-3">
-          <div className="w-full rounded-xl bg-secondary"></div>
-          <div className="w-full rounded-xl bg-secondary"></div>
+          <div className="w-full rounded-xl bg-secondary p-4 flex flex-col justify-between">
+            <div className="text-xs text-left">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod
+            </div>
+            <div className="flex flex-row justify-between">
+              <div className="text-xl font-semibold">Eventos</div>
+            </div>
+          </div>
+          <div className="w-full rounded-xl bg-[#182361] p-4 flex flex-col justify-between">
+            <div className="text-xs text-left">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod
+            </div>
+            <div className="flex flex-row justify-between">
+              <div className="text-xl font-semibold">Empresas</div>
+            </div>
+          </div>
         </div>
-        <div className="w-full rounded-xl bg-secondary h-36"></div>
+        <div className="w-full rounded-xl bg-primary h-36 flex flex-row justify-between items-center px-6">
+          <div className="text-3xl font-semibold">Horário</div>
+        </div>
       </div>
     </BaseLayout>
   );
