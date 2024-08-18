@@ -17,6 +17,7 @@ export const Home = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod
           </div>
+          <div className="text-md text-center mt-1 underline">Saber mais</div>
         </div>
         <div className="w-full h-36 flex flex-row gap-4 my-3">
           <div className="w-full rounded-xl bg-secondary p-4 flex flex-col justify-between">
@@ -24,8 +25,9 @@ export const Home = () => {
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod
             </div>
-            <div className="flex flex-row justify-between">
+            <div className="flex flex-row justify-between items-center h-8">
               <div className="text-xl font-semibold">Eventos</div>
+              <img src="public/icons/circle_right.svg" className="w-8 h-8" />
             </div>
           </div>
           <div className="w-full rounded-xl bg-[#182361] p-4 flex flex-col justify-between">
@@ -33,13 +35,18 @@ export const Home = () => {
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod
             </div>
-            <div className="flex flex-row justify-between">
+            <div className="flex flex-row justify-between items-center">
               <div className="text-xl font-semibold">Empresas</div>
+              <img src="public/icons/circle_right.svg" className="w-8 h-8" />
             </div>
           </div>
         </div>
         <div className="w-full rounded-xl bg-primary h-36 flex flex-row justify-between items-center px-6">
           <div className="text-3xl font-semibold">Horário</div>
+          <img
+            src="public/icons/circle_right_30.svg"
+            className="w-12 h-12 rotate-[-45deg]"
+          />
         </div>
       </div>
     </BaseLayout>
