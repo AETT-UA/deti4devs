@@ -132,38 +132,35 @@ def update_empresa(
     if db_empresas is None:
         raise HTTPException(status_code=404, detail="Empresa not found")
     
-    try:
-        # update 'Atividade' object
-        db.query(Atividade).filter(Atividade.id == db_empresas.atividade_id).update({
-            "nome": empresa.nome,
-            "pontos": empresa.pontos
-        })
+    # update 'Atividade' object
+    db.query(Atividade).filter(Atividade.id == db_empresas.atividade_id).update({
+        "nome": empresa.nome,
+        "pontos": empresa.pontos
+    })
 
-        # update 'Empresas' object
-        db.query(Empresas).filter(Empresas.id == empresa_id).update({
-            "sponsor_type": empresa.sponsor_type,
-            "spotlight_time": empresa.spotlight_time
-        })
+    # update 'Empresas' object
+    db.query(Empresas).filter(Empresas.id == empresa_id).update({
+        "sponsor_type": empresa.sponsor_type,
+        "spotlight_time": empresa.spotlight_time
+    })
 
-        db.commit()
+    db.commit()
 
-        db.refresh(db_empresas)
+    # refresh 'Empresas' object after commit
+    db.refresh(db_empresas)
 
-        # Recarregar a instância da atividade para refletir as mudanças
-        db_atividade = db.query(Atividade).filter(Atividade.id == db_empresas.atividade_id).first()
+    # get 'Atividade' object after commit
+    db_atividade = db.query(Atividade).filter(Atividade.id == db_empresas.atividade_id).first()
 
-        # return joined object
-        return Empresa(
-            id=db_empresas.id,
-            nome=db_atividade.nome,
-            pontos=db_atividade.pontos,
-            sponsor_type=db_empresas.sponsor_type,
-            spotlight_time=db_empresas.spotlight_time,
-            user_id=db_empresas.user_id
-        )
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
+    # return joined object
+    return Empresa(
+        id=db_empresas.id,
+        nome=db_atividade.nome,
+        pontos=db_atividade.pontos,
+        sponsor_type=db_empresas.sponsor_type,
+        spotlight_time=db_empresas.spotlight_time,
+        user_id=db_empresas.user_id
+    )
     
 @router.delete("/{empresa_id}", response_model=Empresa)
 def delete_empresa(empresa_id: int, db: Session = Depends(get_db)):

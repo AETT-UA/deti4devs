@@ -16,9 +16,9 @@ class EmpresaCreate(EmpresaBase):
     def check_user(cls, values):
         user = values.get("user")
         user_id = values.get("user_id")
-        if user and user_id:
+        if user is not None and user_id is not None:
             raise ValueError("user and user_id are mutually exclusive")
-        if not user and not user_id:
+        if user is None and user_id is None:
             raise ValueError("user or user_id is required")
         return values
 
