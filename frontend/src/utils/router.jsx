@@ -8,7 +8,7 @@ import { Desafios } from "../pages/desafios";
 export const router = createBrowserRouter([
   {
     path: "/",
-    //        element: <AuthOutlet fallbackPath="/login" />,
+    element: <AuthOutlet fallbackPath="/login" />,
     children: [
       {
         path: "/",
