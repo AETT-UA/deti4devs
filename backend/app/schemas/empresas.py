@@ -23,7 +23,7 @@ class EmpresaCreate(EmpresaBase):
         return values
 
 class EmpresaUpdate(EmpresaBase):
-    user_id: Optional[int]
+    user_id: int
 
 class Empresa(EmpresaBase):
     id: int

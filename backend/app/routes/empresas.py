@@ -10,9 +10,8 @@ from ..models.atividade import Atividade
 from ..schemas.users import User, UserCreate
 from ..schemas.empresas import *
 from sqlalchemy.orm import Session
-from datetime import datetime
 
-from app.routes.auth import register_user, get_password_hash
+from app.routes.auth import get_password_hash
 
 router = APIRouter(
     prefix="/empresas",
@@ -75,7 +74,7 @@ def create_empresa(
 
 @router.get("/", response_model=List[Empresa])
 def read_empresas(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    # Join 'Atividade' and 'Desafios' tables
+    # Join 'Atividade' and 'Empresas' tables
     db_empresas = (
         db.query(
             Empresas.id,
@@ -98,7 +97,7 @@ def read_empresas(skip: int = 0, limit: int = 10, db: Session = Depends(get_db))
 
 @router.get("/{empresa_id}", response_model=Empresa)
 def read_empresa(empresa_id: int, db: Session = Depends(get_db)):
-    # Join 'Atividade' and 'Desafios' tables
+    # Join 'Atividade' and 'Empresas' tables
     db_empresas = (
         db.query(
             Empresas.id,
@@ -113,7 +112,7 @@ def read_empresa(empresa_id: int, db: Session = Depends(get_db)):
         .first()
     )
     if db_empresas is None:
-        raise HTTPException(status_code=404, detail="Desafio not found")
+        raise HTTPException(status_code=404, detail="Empresa not found")
     return db_empresas
 
 @router.put("/{empresa_id}", response_model=Empresa)
@@ -125,7 +124,15 @@ def update_empresa(
     # TODO: check if user is allowed to update empresa (staff)
     # Join 'Atividade' and 'Empresas' tables
     db_empresas = (
-        db.query(Empresas)
+        db.query(
+            Empresas.id,
+            Atividade.nome,
+            Atividade.pontos,
+            Empresas.sponsor_type,
+            Empresas.spotlight_time,
+            Empresas.user_id,
+            Atividade.id.label("atividade_id")
+            )
         .filter(Empresas.id == empresa_id)
         .first()
     )
@@ -141,25 +148,20 @@ def update_empresa(
     # update 'Empresas' object
     db.query(Empresas).filter(Empresas.id == empresa_id).update({
         "sponsor_type": empresa.sponsor_type,
-        "spotlight_time": empresa.spotlight_time
+        "spotlight_time": empresa.spotlight_time,
+        "user_id": empresa.user_id
     })
 
     db.commit()
 
-    # refresh 'Empresas' object after commit
-    db.refresh(db_empresas)
-
-    # get 'Atividade' object after commit
-    db_atividade = db.query(Atividade).filter(Atividade.id == db_empresas.atividade_id).first()
-
     # return joined object
     return Empresa(
-        id=db_empresas.id,
-        nome=db_atividade.nome,
-        pontos=db_atividade.pontos,
-        sponsor_type=db_empresas.sponsor_type,
-        spotlight_time=db_empresas.spotlight_time,
-        user_id=db_empresas.user_id
+        id=empresa_id,
+        nome=empresa.nome,
+        pontos=empresa.pontos,
+        sponsor_type=empresa.sponsor_type,
+        spotlight_time=empresa.spotlight_time,
+        user_id=empresa.user_id
     )
     
 @router.delete("/{empresa_id}", response_model=Empresa)
@@ -167,34 +169,27 @@ def delete_empresa(empresa_id: int, db: Session = Depends(get_db)):
     # TODO: check if user is allowed to delete empresa (staff)
     # Join 'Atividade' and 'Empresas' tables
     db_empresas = (
-        db.query(Empresas)
+        db.query(
+            Empresas.id,
+            Atividade.nome,
+            Atividade.pontos,
+            Empresas.sponsor_type,
+            Empresas.spotlight_time,
+            Empresas.user_id,
+            Atividade.id.label("atividade_id")
+            )
         .filter(Empresas.id == empresa_id)
         .first()
     )
     if db_empresas is None:
         raise HTTPException(status_code=404, detail="Empresa not found")
     
-    db_atividades = (
-        db.query(Atividade)
-        .filter(Atividade.id == db_empresas.atividade_id)
-        .first()
-    )
-
-    response = Empresa(
-        id=db_empresas.id,
-        nome=db_atividades.nome,
-        pontos=db_atividades.pontos,
-        sponsor_type=db_empresas.sponsor_type,
-        spotlight_time=db_empresas.spotlight_time,
-        user_id=db_empresas.user_id
-    )
-
     # disable user
     db.query(Users).filter(Users.id == db_empresas.user_id).update(
         {"disabled": True}
     )
     
     # delete atividade (this will delete empresa too)
-    db.query(Atividade).filter(Atividade.id == db_atividades.id).delete()
+    db.query(Atividade).filter(Atividade.id == db_empresas.atividade_id).delete()
     db.commit()
-    return response
+    return db_empresas
