@@ -1,3 +1,4 @@
+from sqlalchemy import inspect
 from typing import List, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -11,34 +12,29 @@ from ..schemas.desafios import DesafioCreate, DesafioUpdate, Desafio
 from sqlalchemy.orm import Session
 
 router = APIRouter(
-    prefix="/desafios",
-    tags=["desafios"],
-    responses={404: {"description": "Not found"}}
+    prefix="/desafios", tags=["desafios"], responses={404: {"description": "Not found"}}
 )
-from sqlalchemy import inspect
+
 
 @router.post("/", response_model=Desafio)
 def create_desafio(
     desafio: DesafioCreate,
     current_user: Annotated[Users, Depends(get_current_active_user)],
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     # TODO: check if user is allowed to create desafio (staff)
     try:
         with db.begin():
             # create 'Atividade' object
-            db_atividade = Atividade(
-                nome=desafio.nome,
-                pontos=desafio.pontos
-            )
+            db_atividade = Atividade(nome=desafio.nome, pontos=desafio.pontos)
             db.add(db_atividade)
-            db.flush() # flush to get the id
+            db.flush()  # flush to get the id
 
             # create 'Desafios' object
             db_desafio = Desafios(
                 descricao=desafio.descricao,
-                empresa_id=desafio.empresa_id,
-                atividade_id=db_atividade.id
+                # empresa_id=desafio.empresa_id,
+                atividade_id=db_atividade.id,
             )
             db.add(db_desafio)
 
@@ -51,11 +47,11 @@ def create_desafio(
                 nome=db_atividade.nome,
                 pontos=db_atividade.pontos,
                 descricao=db_desafio.descricao,
-                empresa_id=db_desafio.empresa_id
             )
     except Exception as e:
         db.rollback()
         return HTTPException(status_code=400, detail=str(e))
+
 
 @router.get("/", response_model=List[Desafio])
 def read_desafios(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
@@ -66,15 +62,15 @@ def read_desafios(skip: int = 0, limit: int = 10, db: Session = Depends(get_db))
             Atividade.nome,
             Atividade.pontos,
             Desafios.descricao,
-            Desafios.empresa_id
             )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .offset(skip)
         .limit(limit)
         .all()
     )
-    
+
     return db_desafios
+
 
 @router.get("/{desafio_id}", response_model=Desafio)
 def read_desafio(desafio_id: int, db: Session = Depends(get_db)):
@@ -85,7 +81,6 @@ def read_desafio(desafio_id: int, db: Session = Depends(get_db)):
             Atividade.nome,
             Atividade.pontos,
             Desafios.descricao,
-            Desafios.empresa_id
             )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
@@ -95,12 +90,13 @@ def read_desafio(desafio_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Desafio not found")
     return db_desafio
 
+
 @router.put("/{desafio_id}", response_model=Desafio)
 def update_desafio(
     desafio_id: int,
     desafio: DesafioUpdate,
     current_user: Annotated[Users, Depends(get_current_active_user)],
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     # TODO: check if user is allowed to update desafio (staff)
 
@@ -111,7 +107,6 @@ def update_desafio(
             Atividade.nome,
             Atividade.pontos,
             Desafios.descricao,
-            Desafios.empresa_id
             )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
@@ -119,33 +114,32 @@ def update_desafio(
     )
     if db_desafio is None:
         raise HTTPException(status_code=404, detail="Desafio not found")
-    
+
     # update 'Atividade' object
-    db.query(Atividade).filter(Atividade.id == db_desafio.id).update({
-        "nome": desafio.nome,
-        "pontos": desafio.pontos
-    })
+    db.query(Atividade).filter(Atividade.id == db_desafio.id).update(
+        {"nome": desafio.nome, "pontos": desafio.pontos}
+    )
     # update 'Desafios' object
     db.query(Desafios).filter(Desafios.id == db_desafio.id).update({
         "descricao": desafio.descricao,
-        "empresa_id": desafio.empresa_id
     })
     db.commit()
-    
+
     # return updated object
     return Desafio(
         id=db_desafio.id,
         nome=desafio.nome,
         pontos=desafio.pontos,
         descricao=desafio.descricao,
-        empresa_id=desafio.empresa_id
     )
+
 
 @router.delete("/{desafio_id}", response_model=Desafio)
 def delete_desafio(
     desafio_id: int,
     current_user: Annotated[Users, Depends(get_current_active_user)],
-    db: Session = Depends(get_db)):
+    db: Session = Depends(get_db),
+):
     # TODO: check if user is allowed to delete desafio (staff)
 
     # Join 'Atividade' and 'Desafios' tables
@@ -155,7 +149,6 @@ def delete_desafio(
             Atividade.nome,
             Atividade.pontos,
             Desafios.descricao,
-            Desafios.empresa_id
             )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
@@ -163,7 +156,7 @@ def delete_desafio(
     )
     if db_desafio is None:
         raise HTTPException(status_code=404, detail="Desafio not found")
-    
+
     # delete atividade (this will delete desafio too)
     db.query(Atividade).filter(Atividade.id == db_desafio.id).delete()
     db.commit()
