@@ -57,8 +57,7 @@ def create_desafio(
 def read_desafios(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     # Join 'Atividade' and 'Desafios' tables
     db_desafios = (
-        db.query(Desafios.id, Atividade.nome,
-                 Atividade.pontos, Desafios.descricao)
+        db.query(Desafios.id, Atividade.nome, Atividade.pontos, Desafios.descricao)
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .offset(skip)
         .limit(limit)
@@ -72,8 +71,7 @@ def read_desafios(skip: int = 0, limit: int = 10, db: Session = Depends(get_db))
 def read_desafio(desafio_id: int, db: Session = Depends(get_db)):
     # Join 'Atividade' and 'Desafios' tables
     db_desafio = (
-        db.query(Desafios.id, Atividade.nome,
-                 Atividade.pontos, Desafios.descricao)
+        db.query(Desafios.id, Atividade.nome, Atividade.pontos, Desafios.descricao)
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
         .first()
@@ -94,8 +92,7 @@ def update_desafio(
 
     # Join 'Atividade' and 'Desafios' tables
     db_desafio = (
-        db.query(Desafios.id, Atividade.nome,
-                 Atividade.pontos, Desafios.descricao)
+        db.query(Desafios.id, Atividade.nome, Atividade.pontos, Desafios.descricao)
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
         .first()
@@ -132,8 +129,7 @@ def delete_desafio(
 
     # Join 'Atividade' and 'Desafios' tables
     db_desafio = (
-        db.query(Desafios.id, Atividade.nome,
-                 Atividade.pontos, Desafios.descricao)
+        db.query(Desafios.id, Atividade.nome, Atividade.pontos, Desafios.descricao)
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
         .first()
