@@ -19,7 +19,7 @@ router = APIRouter(
 @router.post("/", response_model=Desafio)
 def create_desafio(
     desafio: DesafioCreate,
-    # current_user: Annotated[Users, Depends(get_current_active_user)],
+    current_user: Annotated[Users, Depends(get_current_active_user)],
     db: Session = Depends(get_db),
 ):
     # TODO: check if user is allowed to create desafio (staff)
