@@ -43,11 +43,11 @@ def create_desafio(
 
         # return joined object
         return Desafio(
-            id=db_desafio.id,
-            nome=db_atividade.nome,
-            pontos=db_atividade.pontos,
-            descricao=db_desafio.descricao,
-        )
+                id=db_desafio.id,
+                nome=db_atividade.nome,
+                pontos=db_atividade.pontos,
+                descricao=db_desafio.descricao,
+            )
     except Exception as e:
         db.rollback()
         return HTTPException(status_code=400, detail=str(e))
@@ -57,7 +57,12 @@ def create_desafio(
 def read_desafios(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     # Join 'Atividade' and 'Desafios' tables
     db_desafios = (
-        db.query(Desafios.id, Atividade.nome, Atividade.pontos, Desafios.descricao)
+        db.query(
+            Desafios.id,
+            Atividade.nome,
+            Atividade.pontos,
+            Desafios.descricao,
+            )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .offset(skip)
         .limit(limit)
@@ -71,7 +76,12 @@ def read_desafios(skip: int = 0, limit: int = 10, db: Session = Depends(get_db))
 def read_desafio(desafio_id: int, db: Session = Depends(get_db)):
     # Join 'Atividade' and 'Desafios' tables
     db_desafio = (
-        db.query(Desafios.id, Atividade.nome, Atividade.pontos, Desafios.descricao)
+        db.query(
+            Desafios.id,
+            Atividade.nome,
+            Atividade.pontos,
+            Desafios.descricao,
+            )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
         .first()
@@ -92,7 +102,12 @@ def update_desafio(
 
     # Join 'Atividade' and 'Desafios' tables
     db_desafio = (
-        db.query(Desafios.id, Atividade.nome, Atividade.pontos, Desafios.descricao)
+        db.query(
+            Desafios.id,
+            Atividade.nome,
+            Atividade.pontos,
+            Desafios.descricao,
+            )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
         .first()
@@ -105,9 +120,9 @@ def update_desafio(
         {"nome": desafio.nome, "pontos": desafio.pontos}
     )
     # update 'Desafios' object
-    db.query(Desafios).filter(Desafios.id == db_desafio.id).update(
-        {"descricao": desafio.descricao}
-    )
+    db.query(Desafios).filter(Desafios.id == db_desafio.id).update({
+        "descricao": desafio.descricao,
+    })
     db.commit()
 
     # return updated object
@@ -129,7 +144,12 @@ def delete_desafio(
 
     # Join 'Atividade' and 'Desafios' tables
     db_desafio = (
-        db.query(Desafios.id, Atividade.nome, Atividade.pontos, Desafios.descricao)
+        db.query(
+            Desafios.id,
+            Atividade.nome,
+            Atividade.pontos,
+            Desafios.descricao,
+            )
         .join(Atividade, Desafios.atividade_id == Atividade.id)
         .filter(Desafios.id == desafio_id)
         .first()

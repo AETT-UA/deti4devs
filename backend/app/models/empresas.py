@@ -14,9 +14,14 @@ class Empresas(Base):
         nullable=False
     )
     sponsor_type: Mapped[str] = mapped_column(String(50), nullable=True)
+
+    atividade_id: Mapped[int] = mapped_column(
+        ForeignKey(f"atividade.id", ondelete="CASCADE"),
+        nullable=False
+    )
     spotlight_time: Mapped[TIMESTAMP] = mapped_column(TIMESTAMP, nullable=True)
 
     user: Mapped["Users"] = relationship("Users", back_populates="empresas")
-    #atividades: Mapped[List["Atividade"]] = relationship("Atividade", back_populates="empresa")
+    atividades: Mapped["Atividade"] = relationship("Atividade", back_populates="empresa")
     eventos: Mapped[List["Eventos"]] = relationship("Eventos", back_populates="empresa")
-    #desafios: Mapped[List["Desafios"]] = relationship("Desafios", back_populates="empresa")
+    desafios: Mapped[List["Desafios"]] = relationship("Desafios", back_populates="empresa")
