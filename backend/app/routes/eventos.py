@@ -17,7 +17,7 @@ router = APIRouter(
     responses={404: {"description": "Not found"}}
 )
 
-@router.post("/",response_model=Eventos)
+@router.post("/",response_model=Evento)
 def create_post(evento: EventoCreate,current_user: Annotated[Users, Depends(get_current_active_user)],db: Session = Depends(get_db)):
     db_atividade= Atividade(nome=evento.tipo,)
     db.add(db_atividade)
@@ -98,9 +98,9 @@ def update_eventos(evento_id:int,evento:EventoUpdate,current_user: Annotated[Use
         "nome": evento.nome,
         "pontos": evento.pontos
     })
-    # update 'Desafios' object
+    # update 'Eventos' object
     db.query(Eventos).filter(Eventos.id == evento_id).update({
-        "descricao": evento.descricao,
+        "tipo": evento.tipo,
         "empresa_id": evento.empresa_id
     })
 
