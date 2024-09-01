@@ -13,4 +13,4 @@ class EventoCreate(EventoBase):
 class Evento(EventoBase):
     id:int
     class Config:
-        pass
+        from_attributes = True

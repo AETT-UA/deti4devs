@@ -19,14 +19,15 @@ router = APIRouter(
 
 @router.post("/",response_model=Evento)
 def create_post(evento: EventoCreate,current_user: Annotated[Users, Depends(get_current_active_user)],db: Session = Depends(get_db)):
-    db_atividade= Atividade(nome=evento.tipo,)
+    db_atividade= Atividade(nome=evento.tipo, pontos=evento.pontos)
     db.add(db_atividade)
     db.flush()
     db_evento = Eventos(
         tipo=evento.tipo,
-        empresa_id=evento.empresa_id
+        empresa_id=evento.empresa_id,
+        atividade_id=db_atividade.id
     )
-    db.add(evento)
+    db.add(db_evento)
     db.commit()
     db.refresh(db_atividade)
     db.refresh(db_evento)
@@ -55,8 +56,8 @@ def read_eventos(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     )
 
     return db_eventos
-@router.get("/{evento_id}",response_model=List[Evento])
-def read_eventos(evento_id:int,skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+@router.get("/{evento_id}",response_model=Evento)
+def read_eventos(evento_id:int, db: Session = Depends(get_db)):
     db_eventos = (
         db.query(
             Eventos.id,
@@ -67,9 +68,7 @@ def read_eventos(evento_id:int,skip: int = 0, limit: int = 10, db: Session = Dep
             )
         .join(Atividade, Eventos.atividade_id == Atividade.id)
         .filter(Eventos.id==evento_id)
-        .offset(skip)
-        .limit(limit)
-        .all()
+        .first()
     )
 
     return db_eventos
