@@ -130,5 +130,5 @@ def delete_eventos(evento_id:int,current_user: Annotated[Users, Depends(get_curr
     if db_evento is None:
         raise HTTPException(status_code=404,detail="Evento not Found.")
     db.query(Atividade).filter(Atividade.id == db_evento.atividade_id).delete()
-    
+    db.commit()
     return db_evento
