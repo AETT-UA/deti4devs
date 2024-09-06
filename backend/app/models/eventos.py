@@ -18,6 +18,7 @@ class Eventos(Base):
         nullable=False
     )
     tipo: Mapped[str] = mapped_column(String(50), nullable=True)
+    lotacao_max: Mapped[int] = mapped_column(Integer, nullable=True)
 
     atividade: Mapped["Atividade"] = relationship("Atividade", back_populates="eventos")
     empresa: Mapped["Empresas"] = relationship("Empresas", back_populates="eventos")

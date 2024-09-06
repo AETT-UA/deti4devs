@@ -42,8 +42,7 @@ def create_inscricao(inscricao: InscricaoCreate, current_user: Annotated[Users, 
     return Inscricao.model_validate(db_inscricao)
 
 @router.get("/", response_model=List[Inscricao])
-def read_inscricoes(current_user: Annotated[Users, Depends(get_current_active_user)], event_id: int = None, participant_id: int = None, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    # TODO: Validate if the user is a staff member
+def read_inscricoes(event_id: int = None, participant_id: int = None, skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     db_inscricoes = db.query(Inscricoes)
     if event_id:
         db_inscricoes = db_inscricoes.filter(Inscricoes.evento_id == event_id)
@@ -53,8 +52,7 @@ def read_inscricoes(current_user: Annotated[Users, Depends(get_current_active_us
     return db_inscricoes
 
 @router.get("/{inscricao_id}", response_model=Inscricao)
-def read_inscricao(inscricao_id: int, current_user: Annotated[Users, Depends(get_current_active_user)], db: Session = Depends(get_db)):
-    # TODO: Validate if the user is a staff member
+def read_inscricao(inscricao_id: int, db: Session = Depends(get_db)):
     db_inscricao = db.query(Inscricoes).filter(Inscricoes.id == inscricao_id).first()
     if db_inscricao is None:
         raise HTTPException(status_code=404, detail="Inscricao not found")
