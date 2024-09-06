@@ -17,6 +17,9 @@ router = APIRouter(
     responses={404: {"description": "Not found"}}
 )
 
+
+# Event CRUD
+
 @router.post("/",response_model=Evento)
 def create_post(evento: EventoCreate,current_user: Annotated[Users, Depends(get_current_active_user)],db: Session = Depends(get_db)):
     db_atividade= Atividade(nome=evento.tipo, pontos=evento.pontos)
@@ -132,3 +135,30 @@ def delete_eventos(evento_id:int,current_user: Annotated[Users, Depends(get_curr
     db.query(Atividade).filter(Atividade.id == db_evento.atividade_id).delete()
     db.commit()
     return db_evento
+
+
+# Event registration
+
+from ..models.inscricoes_eventos import Inscricoes
+from ..models.participantes import Participantes
+from ..schemas.inscricoes import InscricaoResponse
+
+@router.post("/{evento_id}/inscricao")
+def inscricao_evento(evento_id:int,current_user: Annotated[Users, Depends(get_current_active_user)],db: Session = Depends(get_db)):
+    # check if user is a participant
+    db_participante = db.query(Participantes).filter(Participantes.user_id == current_user.id).first()
+    if db_participante is None:
+        raise HTTPException(status_code=404,detail="Participant not Found.")
+    
+    # check if event exists
+    db_evento = db.query(Eventos).filter(Eventos.id == evento_id).first()
+    if db_evento is None:
+        raise HTTPException(status_code=404,detail="Event not Found.")
+    
+    # duplicated user registered is prevented by the unique constraint in the database
+    db_inscricao = Inscricoes(participante_id=db_participante.id, evento_id=evento_id)
+    db.add(db_inscricao)
+    db.commit()
+    db.refresh(db_inscricao)
+
+    return db_inscricao

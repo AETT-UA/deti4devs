@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Integer, TIMESTAMP
+from sqlalchemy import ForeignKey, Integer, TIMESTAMP, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import sqlalchemy.sql
 
@@ -19,3 +19,8 @@ class Inscricoes(Base):
 
     participantes: Mapped["Participantes"] = relationship("Participantes", back_populates="inscricoes")
     eventos: Mapped["Eventos"] = relationship("Eventos", back_populates="inscricoes")
+
+    # Unique constraint to prevent duplicate registrations
+    __table_args__ = (
+        UniqueConstraint('participante_id', 'evento_id', name='unique_participante_evento'),
+    )
