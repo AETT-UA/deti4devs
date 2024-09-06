@@ -141,20 +141,15 @@ def delete_eventos(evento_id:int,current_user: Annotated[Users, Depends(get_curr
 
 from ..models.inscricoes_eventos import Inscricoes
 from ..models.participantes import Participantes
-from ..schemas.inscricoes import InscricaoResponse
+from ..schemas.inscricoes import Inscricao
 
-@router.post("/{evento_id}/inscricao")
-def inscricao_evento(evento_id:int,current_user: Annotated[Users, Depends(get_current_active_user)],db: Session = Depends(get_db)):
+@router.post("/{evento_id}/subscription", response_model=Inscricao)
+def subscribe_evento(evento_id:int,current_user: Annotated[Users, Depends(get_current_active_user)],db: Session = Depends(get_db)):
     # check if user is a participant
     db_participante = db.query(Participantes).filter(Participantes.user_id == current_user.id).first()
     if db_participante is None:
-        raise HTTPException(status_code=404,detail="Participant not Found.")
-    
-    # check if event exists
-    db_evento = db.query(Eventos).filter(Eventos.id == evento_id).first()
-    if db_evento is None:
-        raise HTTPException(status_code=404,detail="Event not Found.")
-    
+        raise HTTPException(status_code=404,detail="Should be a participant to subscribe to an event.")
+        
     # duplicated user registered is prevented by the unique constraint in the database
     db_inscricao = Inscricoes(participante_id=db_participante.id, evento_id=evento_id)
     db.add(db_inscricao)
@@ -162,3 +157,15 @@ def inscricao_evento(evento_id:int,current_user: Annotated[Users, Depends(get_cu
     db.refresh(db_inscricao)
 
     return db_inscricao
+
+@router.delete("/{evento_id}/subscription", response_model=Inscricao)
+def unsubscribe_evento(evento_id:int,current_user: Annotated[Users, Depends(get_current_active_user)],db: Session = Depends(get_db)):
+    db_participante = db.query(Participantes).filter(Participantes.user_id == current_user.id).first()
+    if db_participante is None:
+        raise HTTPException(status_code=404,detail="Participant not Found.")
+    
+    db_inscricao = db.query(Inscricoes).filter(Inscricoes.participante_id == db_participante.id, Inscricoes.evento_id == evento_id).first()
+    if db_inscricao is None:
+        raise HTTPException(status_code=404,detail="Registration not Found.")
+    
+    db.delete(db_inscricao)
