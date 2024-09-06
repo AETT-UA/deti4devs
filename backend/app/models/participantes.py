@@ -19,4 +19,5 @@ class Participantes(Base):
     
     user: Mapped["Users"] = relationship("Users", back_populates="participantes")
     participacoes: Mapped[List["Participacao"]] = relationship("Participacao", back_populates="participantes")
+    inscricoes: Mapped[List["Inscricoes"]] = relationship("Inscricoes", back_populates="participantes")
     

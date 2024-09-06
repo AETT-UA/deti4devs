@@ -21,3 +21,4 @@ class Eventos(Base):
 
     atividade: Mapped["Atividade"] = relationship("Atividade", back_populates="eventos")
     empresa: Mapped["Empresas"] = relationship("Empresas", back_populates="eventos")
+    inscricoes: Mapped[List["Inscricoes"]] = relationship("Inscricoes", back_populates="eventos")
